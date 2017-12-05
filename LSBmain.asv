@@ -1,0 +1,28 @@
+cover=imread('tang600.bmp');%读取载体图像
+ste_cover=cover;
+ste_cover=double(ste_cover);
+f_id=fopen('plain.txt','r');
+[msg,len_total]=fread(f_id,'ubit1');
+[m,n]=size(set_cover);
+if len_total>m*n %对嵌入信息量判断
+    error('overflow');
+end
+p=1;%info embed 位数 count
+for f2=1:n
+    for f1=1:m
+        set_cover(f1,f2)=set_cover(f1,f2)-mod(set_cover(f1,f2),2)+msg(p,1);
+        if p==len_total
+            break;
+        end
+        p=p+1;
+    end
+    if p==len_total
+        break;
+    end
+end
+set_cover=uint8(set_cover);
+imwrite(set_cover,'lena_lsb.bmp');
+subplot(2,2,1);imshow(cover);title('原始图形');
+subplot(2,2,2):imhist(cover);title('原始图形的直方图');
+subplot(2,2,3);imshow(set_cover);title('隐藏信息的图像');
+subplot(2,2,4);imhist(set_cover);title('隐藏信息的图形的直方图');
